@@ -1,9 +1,9 @@
 /*
  * =================================================================
- * FILE: /src/screens/OrderScreen.js (FINAL FIXED VERSION)
+ * FILE: /src/screens/OrderScreen.js (FIXED)
  * =================================================================
- * This version includes the complete and correct code for both
- * PayPal and Razorpay payment handlers.
+ * This version fixes the PDF download by using axios to fetch the
+ * invoice, which correctly sends the user's authentication token.
  */
 import React, { useContext, useEffect, useReducer } from 'react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
@@ -12,6 +12,7 @@ import axios from 'axios';
 import { Row, Col, ListGroup, Image, Card, Alert, Button } from 'react-bootstrap';
 import { Store } from '../context/Store';
 
+// ... (reducer function remains the same)
 function reducer(state, action) {
   switch (action.type) {
     case 'FETCH_REQUEST': return { ...state, loading: true, error: '' };
@@ -38,11 +39,10 @@ export default function OrderScreen() {
 
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
-  // PayPal Functions
+  // ... (payment functions remain the same)
   function createOrder(data, actions) {
     return actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] }).then((orderID) => orderID);
   }
-
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
@@ -56,26 +56,18 @@ export default function OrderScreen() {
       }
     });
   }
-
   function onError(err) {
     alert('An error occurred with your payment');
   }
-
-  // Razorpay Function (THIS WAS MISSING)
   const razorpayPaymentHandler = async () => {
       try {
         const { data: razorpayKey } = await axios.get('/api/config/razorpay');
         const { data: razorpayOrder } = await axios.post(`/api/orders/${order._id}/razorpay`, {}, {
             headers: { authorization: `Bearer ${userInfo.token}` }
         });
-        
         const options = {
-            key: razorpayKey,
-            amount: razorpayOrder.amount,
-            currency: razorpayOrder.currency,
-            name: "ProShop",
-            description: `Payment for Order ${order._id}`,
-            order_id: razorpayOrder.id,
+            key: razorpayKey, amount: razorpayOrder.amount, currency: razorpayOrder.currency,
+            name: "ProShop", description: `Payment for Order ${order._id}`, order_id: razorpayOrder.id,
             handler: async function (response) {
                 try {
                     dispatch({ type: 'PAY_REQUEST' });
@@ -89,13 +81,8 @@ export default function OrderScreen() {
                     alert('Payment verification failed');
                 }
             },
-            prefill: {
-                name: userInfo.name,
-                email: userInfo.email,
-            },
-            theme: {
-                color: "#3399cc"
-            }
+            prefill: { name: userInfo.name, email: userInfo.email },
+            theme: { color: "#3399cc" }
         };
         const rzp1 = new window.Razorpay(options);
         rzp1.open();
@@ -104,7 +91,30 @@ export default function OrderScreen() {
       }
   }
 
+  // --- NEW FUNCTION TO HANDLE INVOICE DOWNLOAD ---
+  const downloadInvoiceHandler = async () => {
+    try {
+        const { data } = await axios.get(
+            `/api/orders/${order._id}/invoice`,
+            {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+                responseType: 'blob', // Important: tells axios to expect a file
+            }
+        );
+        const url = window.URL.createObjectURL(new Blob([data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `invoice-${order._id}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        alert('Could not download the invoice.');
+    }
+  };
+
   useEffect(() => {
+    // ... (useEffect logic remains the same)
     const fetchOrder = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
@@ -114,7 +124,6 @@ export default function OrderScreen() {
         dispatch({ type: 'FETCH_FAIL', payload: 'Order Not Found' });
       }
     };
-
     if (!userInfo) { navigate('/login'); return; }
     if (!order._id || successPay || (order._id && order._id !== orderId)) {
         fetchOrder();
@@ -147,13 +156,9 @@ export default function OrderScreen() {
                 <Alert variant="success">
                   Paid on {new Date(order.paidAt).toLocaleString()}
                   <br />
-                  {order.paymentResult && (
-                    <span><strong>Transaction ID:</strong> {order.paymentResult.id}</span>
-                  )}
+                  {order.paymentResult && (<span><strong>Transaction ID:</strong> {order.paymentResult.id}</span>)}
                 </Alert>
-              ) : (
-                <Alert variant="danger">Not Paid</Alert>
-              )}
+              ) : (<Alert variant="danger">Not Paid</Alert>)}
             </ListGroup.Item>
             <ListGroup.Item>
               <h2>Order Items</h2>
@@ -180,12 +185,24 @@ export default function OrderScreen() {
                 <ListGroup.Item><Row><Col>Shipping</Col><Col>${order.shippingPrice.toFixed(2)}</Col></Row></ListGroup.Item>
                 <ListGroup.Item><Row><Col>Tax</Col><Col>${order.taxPrice.toFixed(2)}</Col></Row></ListGroup.Item>
                 <ListGroup.Item><Row><Col><strong>Order Total</strong></Col><Col><strong>${order.totalPrice.toFixed(2)}</strong></Col></Row></ListGroup.Item>
+                
                 {!order.isPaid && (
                   <ListGroup.Item>
                     {order.paymentMethod === 'PayPal' && ( isPending ? (<div>Loading PayPal...</div>) : (<div><PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons></div>))}
                     {order.paymentMethod === 'Razorpay' && (<div className="d-grid"><Button type="button" onClick={razorpayPaymentHandler}>Pay with Razorpay</Button></div>)}
                     {loadingPay && <div>Loading...</div>}
                   </ListGroup.Item>
+                )}
+
+                {order.isPaid && (
+                    <ListGroup.Item>
+                        <div className="d-grid">
+                            {/* --- UPDATED BUTTON --- */}
+                            <Button type="button" onClick={downloadInvoiceHandler}>
+                                Download Invoice
+                            </Button>
+                        </div>
+                    </ListGroup.Item>
                 )}
               </ListGroup>
             </Card.Body>

@@ -1,3 +1,9 @@
+/*
+ * =================================================================
+ * FILE: /src/components/Header.js (UPDATED)
+ * =================================================================
+ * Add an "Admin" dropdown menu that is only visible to admin users.
+ */
 import React, { useContext } from 'react';
 import { Navbar, Nav, Container, Badge, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -30,7 +36,6 @@ const Header = () => {
               </LinkContainer>
               {userInfo ? (
                 <NavDropdown title={userInfo.name} id="username">
-                  {/* UPDATE: Link to Order History */}
                   <LinkContainer to="/orderhistory">
                     <NavDropdown.Item>Order History</NavDropdown.Item>
                   </LinkContainer>
@@ -39,6 +44,15 @@ const Header = () => {
                 </NavDropdown>
               ) : (
                 <LinkContainer to="/login"><Nav.Link><i className="fas fa-user"></i> Sign In</Nav.Link></LinkContainer>
+              )}
+              {/* ADMIN MENU */}
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title="Admin" id="adminmenu">
+                  <LinkContainer to="/admin/products">
+                    <NavDropdown.Item>Products</NavDropdown.Item>
+                  </LinkContainer>
+                  {/* We will add more admin links later */}
+                </NavDropdown>
               )}
             </Nav>
           </Navbar.Collapse>

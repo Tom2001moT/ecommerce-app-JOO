@@ -18,6 +18,7 @@
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^6.18.0",
-    "mongoose": "^6.2.9"
+    "mongoose": "^6.2.9",
+    "razorpay": "^2.9.6"
   }
 }

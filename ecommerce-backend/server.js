@@ -12,10 +12,14 @@ const app = express();
 
 app.use(express.json());
 
-// This route sends the PayPal Client ID from your .env file
 app.get('/api/config/paypal', (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 );
+
+// New route for Razorpay Key
+app.get('/api/config/razorpay', (req, res) => {
+    res.send(process.env.RAZORPAY_KEY_ID);
+});
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);

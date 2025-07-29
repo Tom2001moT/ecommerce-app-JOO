@@ -30,7 +30,10 @@ const Header = () => {
               </LinkContainer>
               {userInfo ? (
                 <NavDropdown title={userInfo.name} id="username">
-                  <LinkContainer to="/profile"><NavDropdown.Item>Profile</NavDropdown.Item></LinkContainer>
+                  {/* UPDATE: Link to Order History */}
+                  <LinkContainer to="/orderhistory">
+                    <NavDropdown.Item>Order History</NavDropdown.Item>
+                  </LinkContainer>
                   <NavDropdown.Divider />
                   <a className="dropdown-item" href="#signout" onClick={signoutHandler}>Sign Out</a>
                 </NavDropdown>
@@ -45,3 +48,4 @@ const Header = () => {
   );
 };
 export default Header;
+

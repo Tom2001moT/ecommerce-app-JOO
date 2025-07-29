@@ -11,7 +11,8 @@ import RegisterScreen from './screens/RegisterScreen';
 import ShippingAddressScreen from './screens/ShippingAddressScreen';
 import PaymentMethodScreen from './screens/PaymentMethodScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
-import OrderScreen from './screens/OrderScreen'; // Make sure this is imported
+import OrderScreen from './screens/OrderScreen';
+import OrderHistoryScreen from './screens/OrderHistoryScreen'; // <-- Import
 
 const App = () => {
   return (
@@ -25,8 +26,8 @@ const App = () => {
             <Route path="/shipping" element={<ShippingAddressScreen />} />
             <Route path="/payment" element={<PaymentMethodScreen />} />
             <Route path="/placeorder" element={<PlaceOrderScreen />} />
-            {/* THIS IS THE MISSING ROUTE */}
             <Route path="/order/:id" element={<OrderScreen />} />
+            <Route path="/orderhistory" element={<OrderHistoryScreen />} /> {/* <-- Add Route */}
             <Route path="/product/:id" element={<ProductScreen />} />
             <Route path="/cart" element={<CartScreen />} />
             <Route path="/" element={<HomeScreen />} exact />

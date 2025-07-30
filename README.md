@@ -196,4 +196,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or need help with setup, please open an issue in the GitHub repository.
 
+<<<<<<< HEAD
 **🥰by: WDG🥰**
+=======
+**🥰by: WDG🥰**
+>>>>>>> 52896c7e99d6dd373abfda6ee98f2321e7c06694

@@ -65,7 +65,8 @@ router.put('/:id', protect, admin, async (req, res) => {
 router.delete('/:id', protect, admin, async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (product) {
-        await product.remove();
+        // In Mongoose 6+, remove() is deprecated. Use deleteOne() or deleteMany().
+        await product.deleteOne({ _id: product._id });
         res.json({ message: 'Product removed' });
     } else {
         res.status(404).json({ message: 'Product not found' });

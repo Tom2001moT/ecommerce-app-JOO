@@ -2,7 +2,7 @@
  * =================================================================
  * FILE: /src/components/Header.js (UPDATED)
  * =================================================================
- * Add an "Admin" dropdown menu that is only visible to admin users.
+ * Add a new "Users" link to the Admin dropdown menu.
  */
 import React, { useContext } from 'react';
 import { Navbar, Nav, Container, Badge, NavDropdown } from 'react-bootstrap';
@@ -51,7 +51,13 @@ const Header = () => {
                   <LinkContainer to="/admin/products">
                     <NavDropdown.Item>Products</NavDropdown.Item>
                   </LinkContainer>
-                  {/* We will add more admin links later */}
+                  <LinkContainer to="/admin/orders">
+                    <NavDropdown.Item>Orders</NavDropdown.Item>
+                  </LinkContainer>
+                  {/* NEW LINK */}
+                  <LinkContainer to="/admin/users">
+                    <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
                 </NavDropdown>
               )}
             </Nav>
@@ -62,4 +68,3 @@ const Header = () => {
   );
 };
 export default Header;
-

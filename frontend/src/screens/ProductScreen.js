@@ -1,16 +1,20 @@
+/*
+ * =================================================================
+ * FILE: /src/screens/ProductScreen.js
+ * =================================================================
+ */
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Store } from '../context/Store';
 
-const ProductScreen = () => {
+export default function ProductScreen() {
     const navigate = useNavigate();
     const { state, dispatch: ctxDispatch } = useContext(Store);
     const [product, setProduct] = useState({});
     const [qty, setQty] = useState(1);
     const { id: productId } = useParams();
-
     useEffect(() => {
         const fetchProduct = async () => {
             const { data } = await axios.get(`/api/products/${productId}`);
@@ -18,12 +22,10 @@ const ProductScreen = () => {
         };
         fetchProduct();
     }, [productId]);
-
     const addToCartHandler = () => {
         ctxDispatch({ type: 'CART_ADD_ITEM', payload: { ...product, qty } });
         navigate('/cart');
     };
-
     return (
         <>
             <Link className='btn btn-light my-3' to='/'>Go Back</Link>
@@ -65,4 +67,3 @@ const ProductScreen = () => {
         </>
     );
 };
-export default ProductScreen;

@@ -1,17 +1,18 @@
 /*
  * =================================================================
- * FILE: /src/screens/UserListScreen.js (COMPLETE & FINAL VERSION)
+ * FILE: /src/screens/UserListScreen.js (UPDATED)
  * =================================================================
- * This version adds the full functionality for deleting users and
- * managing their admin status, including your suggestion for a
- * "Remove Admin" button and protection for the main admin.
+ * This version enables the "Edit" button and makes it navigate to the
+ * new UserEditScreen.
  */
 import React, { useContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import { Table, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { Store } from '../context/Store';
 
 const reducer = (state, action) => {
+  // ... reducer code remains the same
   switch (action.type) {
     case 'FETCH_REQUEST': return { ...state, loading: true };
     case 'FETCH_SUCCESS': return { ...state, users: action.payload, loading: false };
@@ -29,6 +30,7 @@ const reducer = (state, action) => {
 };
 
 export default function UserListScreen() {
+  const navigate = useNavigate();
   const [{ loading, error, users, successDelete, successUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
@@ -49,7 +51,6 @@ export default function UserListScreen() {
         dispatch({ type: 'FETCH_FAIL', payload: 'Failed to fetch users' });
       }
     };
-    // Refetch data after a successful delete or update to show the changes
     if (successDelete || successUpdate) {
         if(successDelete) dispatch({ type: 'DELETE_RESET' });
         if(successUpdate) dispatch({ type: 'UPDATE_RESET' });
@@ -117,37 +118,26 @@ export default function UserListScreen() {
                 <td><a href={`mailto:${user.email}`}>{user.email}</a></td>
                 <td>{user.isAdmin ? 'Yes' : 'No'}</td>
                 <td>
-                  <Button type="button" variant="light" size="sm" disabled>
-                    Edit
-                  </Button>
-                  &nbsp;
+                  {/* --- THIS BUTTON IS NOW ENABLED --- */}
                   <Button 
                     type="button" 
                     variant="light" 
                     size="sm" 
-                    onClick={() => deleteHandler(user)} 
-                    disabled={user._id === userInfo._id}
+                    onClick={() => navigate(`/admin/user/${user._id}`)}
                   >
+                    Edit
+                  </Button>
+                  &nbsp;
+                  <Button type="button" variant="light" size="sm" onClick={() => deleteHandler(user)} disabled={user._id === userInfo._id}>
                     Delete
                   </Button>
                   &nbsp;
                   {user.isAdmin ? (
-                    <Button 
-                      type="button" 
-                      variant="light" 
-                      size="sm" 
-                      onClick={() => toggleAdminHandler(user, false)} 
-                      disabled={user._id === userInfo._id}
-                    >
+                    <Button type="button" variant="light" size="sm" onClick={() => toggleAdminHandler(user, false)} disabled={user._id === userInfo._id}>
                       Remove Admin
                     </Button>
                   ) : (
-                    <Button 
-                      type="button" 
-                      variant="light" 
-                      size="sm" 
-                      onClick={() => toggleAdminHandler(user, true)}
-                    >
+                    <Button type="button" variant="light" size="sm" onClick={() => toggleAdminHandler(user, true)}>
                       Recruit as Admin
                     </Button>
                   )}

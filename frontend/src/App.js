@@ -2,7 +2,7 @@
  * =================================================================
  * FILE: /src/App.js (UPDATED)
  * =================================================================
- * Add the new admin route for the user list screen.
+ * Add the new admin route for the user edit screen.
  */
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -24,7 +24,8 @@ import AdminRoute from './components/AdminRoute';
 import ProductListScreen from './screens/ProductListScreen';
 import ProductEditScreen from './screens/ProductEditScreen';
 import OrderListScreen from './screens/OrderListScreen';
-import UserListScreen from './screens/UserListScreen'; // <-- Import
+import UserListScreen from './screens/UserListScreen';
+import UserEditScreen from './screens/UserEditScreen'; // <-- Import
 
 const App = () => {
   return (
@@ -50,8 +51,9 @@ const App = () => {
               <Route path="products" element={<ProductListScreen />} />
               <Route path="product/:id" element={<ProductEditScreen />} />
               <Route path="orders" element={<OrderListScreen />} />
-              {/* NEW ROUTE */}
               <Route path="users" element={<UserListScreen />} />
+              {/* NEW ROUTE */}
+              <Route path="user/:id" element={<UserEditScreen />} />
             </Route>
 
           </Routes>

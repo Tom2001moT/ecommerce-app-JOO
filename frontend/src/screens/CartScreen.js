@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Row, Col, ListGroup, Image, Button, Card } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Button, Card, Alert } from 'react-bootstrap';
 import { Store } from '../context/Store';
 
-const CartScreen = () => {
+export default function CartScreen() {
     const navigate = useNavigate();
     const { state, dispatch: ctxDispatch } = useContext(Store);
     const { cart: { cartItems } } = state;
@@ -13,7 +13,6 @@ const CartScreen = () => {
     };
 
     const checkoutHandler = () => {
-        // Navigate to login, which will then redirect to shipping
         navigate('/login?redirect=/shipping');
     };
 
@@ -22,7 +21,9 @@ const CartScreen = () => {
             <Col md={8}>
                 <h1>Shopping Cart</h1>
                 {cartItems.length === 0 ? (
-                    <h3>Your cart is empty <Link to='/'>Go Back</Link></h3>
+                    <Alert variant="info">
+                        Your cart is empty. <Link to='/'>Go Back</Link>
+                    </Alert>
                 ) : (
                     <ListGroup variant='flush'>
                         {cartItems.map((item) => (
@@ -32,9 +33,7 @@ const CartScreen = () => {
                                     <Col md={3}><Link to={`/product/${item._id}`}>{item.name}</Link></Col>
                                     <Col md={2}>${item.price}</Col>
                                     <Col md={2}>Qty: {item.qty}</Col>
-                                    <Col md={1}>
-                                        <Button onClick={() => removeItemHandler(item)} type='button' variant='light'><i className='fas fa-trash'></i></Button>
-                                    </Col>
+                                    <Col md={1}><Button onClick={() => removeItemHandler(item)} type='button' variant='light'><i className='fas fa-trash'></i></Button></Col>
                                 </Row>
                             </ListGroup.Item>
                         ))}
@@ -49,9 +48,7 @@ const CartScreen = () => {
                             <h4>${cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}</h4>
                         </ListGroup.Item>
                         <ListGroup.Item className="d-grid">
-                            <Button onClick={checkoutHandler} type='button' className='btn-block' disabled={cartItems.length === 0}>
-                                Proceed to Checkout
-                            </Button>
+                            <Button onClick={checkoutHandler} type='button' className='btn-block' disabled={cartItems.length === 0}>Proceed to Checkout</Button>
                         </ListGroup.Item>
                     </ListGroup>
                 </Card>
@@ -59,4 +56,3 @@ const CartScreen = () => {
         </Row>
     );
 };
-export default CartScreen;

@@ -1,9 +1,7 @@
 /*
  * =================================================================
- * FILE: /src/screens/OrderScreen.js (FIXED)
+ * FILE: /src/screens/OrderScreen.js
  * =================================================================
- * This version fixes the PDF download by using axios to fetch the
- * invoice, which correctly sends the user's authentication token.
  */
 import React, { useContext, useEffect, useReducer } from 'react';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
@@ -12,7 +10,6 @@ import axios from 'axios';
 import { Row, Col, ListGroup, Image, Card, Alert, Button } from 'react-bootstrap';
 import { Store } from '../context/Store';
 
-// ... (reducer function remains the same)
 function reducer(state, action) {
   switch (action.type) {
     case 'FETCH_REQUEST': return { ...state, loading: true, error: '' };
@@ -39,10 +36,10 @@ export default function OrderScreen() {
 
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
-  // ... (payment functions remain the same)
   function createOrder(data, actions) {
     return actions.order.create({ purchase_units: [{ amount: { value: order.totalPrice } }] }).then((orderID) => orderID);
   }
+
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
@@ -56,9 +53,11 @@ export default function OrderScreen() {
       }
     });
   }
+
   function onError(err) {
     alert('An error occurred with your payment');
   }
+
   const razorpayPaymentHandler = async () => {
       try {
         const { data: razorpayKey } = await axios.get('/api/config/razorpay');
@@ -91,16 +90,12 @@ export default function OrderScreen() {
       }
   }
 
-  // --- NEW FUNCTION TO HANDLE INVOICE DOWNLOAD ---
   const downloadInvoiceHandler = async () => {
     try {
-        const { data } = await axios.get(
-            `/api/orders/${order._id}/invoice`,
-            {
-                headers: { Authorization: `Bearer ${userInfo.token}` },
-                responseType: 'blob', // Important: tells axios to expect a file
-            }
-        );
+        const { data } = await axios.get( `/api/orders/${order._id}/invoice`, {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+            responseType: 'blob',
+        });
         const url = window.URL.createObjectURL(new Blob([data]));
         const link = document.createElement('a');
         link.href = url;
@@ -114,7 +109,6 @@ export default function OrderScreen() {
   };
 
   useEffect(() => {
-    // ... (useEffect logic remains the same)
     const fetchOrder = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
@@ -140,6 +134,7 @@ export default function OrderScreen() {
 
   return loading ? (<div>Loading...</div>) : error ? (<Alert variant="danger">{error}</Alert>) : (
     <div>
+      <Button className='my-3' onClick={() => navigate(-1)}>Go Back</Button>
       <h1 className="my-3">Order {orderId}</h1>
       <Row>
         <Col md={8}>
@@ -185,7 +180,6 @@ export default function OrderScreen() {
                 <ListGroup.Item><Row><Col>Shipping</Col><Col>${order.shippingPrice.toFixed(2)}</Col></Row></ListGroup.Item>
                 <ListGroup.Item><Row><Col>Tax</Col><Col>${order.taxPrice.toFixed(2)}</Col></Row></ListGroup.Item>
                 <ListGroup.Item><Row><Col><strong>Order Total</strong></Col><Col><strong>${order.totalPrice.toFixed(2)}</strong></Col></Row></ListGroup.Item>
-                
                 {!order.isPaid && (
                   <ListGroup.Item>
                     {order.paymentMethod === 'PayPal' && ( isPending ? (<div>Loading PayPal...</div>) : (<div><PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons></div>))}
@@ -193,14 +187,10 @@ export default function OrderScreen() {
                     {loadingPay && <div>Loading...</div>}
                   </ListGroup.Item>
                 )}
-
                 {order.isPaid && (
                     <ListGroup.Item>
                         <div className="d-grid">
-                            {/* --- UPDATED BUTTON --- */}
-                            <Button type="button" onClick={downloadInvoiceHandler}>
-                                Download Invoice
-                            </Button>
+                            <Button type="button" onClick={downloadInvoiceHandler}>Download Invoice</Button>
                         </div>
                     </ListGroup.Item>
                 )}

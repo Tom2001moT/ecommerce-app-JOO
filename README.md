@@ -127,6 +127,9 @@ PAYPAL_CLIENT_ID=YOUR_PAYPAL_CLIENT_ID
 # Your API keys from the Razorpay Test Mode dashboard
 RAZORPAY_KEY_ID=YOUR_RAZORPAY_KEY_ID
 RAZORPAY_KEY_SECRET=YOUR_RAZORPAY_KEY_SECRET
+
+# Add main admin emails as coma(,) seperated value
+MAIN_ADMIN_EMAILS=admin1@gmail.com,admin2@gmail.com
 ```
 
 ## Getting Started
@@ -196,8 +199,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or need help with setup, please open an issue in the GitHub repository.
 
-<<<<<<< HEAD
 **🥰by: WDG🥰**
-=======
-**🥰by: WDG🥰**
->>>>>>> 52896c7e99d6dd373abfda6ee98f2321e7c06694

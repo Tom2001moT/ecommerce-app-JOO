@@ -116,7 +116,7 @@ NODE_ENV=development
 PORT=5000
 
 # Your full connection string from the MongoDB Atlas dashboard
-MONGO_URI=mongodb+srv://...
+MONGO_URI=mongodb+srv://...  or  mongodb+srv://{UserName}:{Password}@cluster0.2esays9.mongodb.net/?retryWrites=true&w=majority&appName={ClusterName}
 
 # A long, random, and secret string used for signing authentication tokens
 JWT_SECRET=yourrandomjwtsecretkey
@@ -127,6 +127,9 @@ PAYPAL_CLIENT_ID=YOUR_PAYPAL_CLIENT_ID
 # Your API keys from the Razorpay Test Mode dashboard
 RAZORPAY_KEY_ID=YOUR_RAZORPAY_KEY_ID
 RAZORPAY_KEY_SECRET=YOUR_RAZORPAY_KEY_SECRET
+
+# Add main admin emails as coma(,) seperated value
+MAIN_ADMIN_EMAILS=admin1@gmail.com,admin2@gmail.com
 ```
 
 ## Getting Started

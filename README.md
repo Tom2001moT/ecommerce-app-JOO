@@ -116,7 +116,7 @@ NODE_ENV=development
 PORT=5000
 
 # Your full connection string from the MongoDB Atlas dashboard
-MONGO_URI=mongodb+srv://...
+MONGO_URI=mongodb+srv://...  or  mongodb+srv://{UserName}:{Password}@cluster0.2esays9.mongodb.net/?retryWrites=true&w=majority&appName={ClusterName}
 
 # A long, random, and secret string used for signing authentication tokens
 JWT_SECRET=yourrandomjwtsecretkey
